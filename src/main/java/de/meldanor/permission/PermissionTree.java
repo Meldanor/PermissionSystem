@@ -62,7 +62,6 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     public void put(String node) {
-
         // Split at first fullstop
         int pointIndex = node.indexOf('.');
         // Node is a leaf - insert at this tree
@@ -92,12 +91,12 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
     public boolean hasPermission(String node) {
 
+        if (childs == null)
+            return false;
         int pointIndex = node.indexOf('.');
         if (pointIndex == -1) {
             // Node must be a child of this subtree
             return Collections.binarySearch(childs, new PermissionTree(node)) >= 0;
-        } else if (childs == null) {
-            return false;
         } else {
             // Node must be a child of a subtree of this subtree
 
