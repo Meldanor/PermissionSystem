@@ -18,6 +18,9 @@
 
 package de.meldanor.permission;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,14 +30,21 @@ import org.junit.Test;
 public class GeneralTest {
 
     @Test
-    public void test() {
-        PermissionTree tree = new PermissionTree();
-        tree.put("de");
-        tree.put("de.meldanor");
-        tree.put("de.minestar");
-        tree.put("de.meldanor.test");
-        tree.put("com.minestar");
-        System.out.println(toStringTree(tree));
+    public void convert() {
+        try {
+            File f = new File("src/test/resources/permissions.txt");
+            BufferedReader bReader = new BufferedReader(new FileReader(f));
+            String line = "";
+            PermissionTree tree = new PermissionTree();
+            while ((line = bReader.readLine()) != null) {
+                tree.put(line);
+            }
+            bReader.close();
+            System.out.println(toStringTree(tree));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     // Start of

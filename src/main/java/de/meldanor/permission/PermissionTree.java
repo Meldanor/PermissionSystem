@@ -18,10 +18,9 @@
 
 package de.meldanor.permission;
 
-import java.util.LinkedList;
 import java.util.List;
 
-public class PermissionTree {
+public class PermissionTree implements Comparable<PermissionTree> {
 
     private PermissionTree root;
     private List<PermissionTree> childs;
@@ -55,7 +54,7 @@ public class PermissionTree {
 
     private PermissionTree add(String node) {
         if (childs == null)
-            childs = new LinkedList<PermissionTree>();
+            childs = new SortedList<PermissionTree>();
         PermissionTree newNode = new PermissionTree(this, node);
         childs.add(newNode);
         return newNode;
@@ -63,10 +62,14 @@ public class PermissionTree {
 
     public void put(String node) {
 
+        // Split at first fullstop
         int pointIndex = node.indexOf('.');
+        // Node is a leaf - insert at this tree
         if (pointIndex == -1)
             add(node);
         else {
+            // Split node at first fullstop
+            // Prefix
             String prefix = node.substring(0, pointIndex);
             String suffix = node.substring(pointIndex + 1);
             PermissionTree childNode = null;
@@ -90,4 +93,9 @@ public class PermissionTree {
     public String toString() {
         return node;
     }
+
+    public int compareTo(PermissionTree other) {
+        return this.node.compareTo(other.node);
+    }
+
 }
