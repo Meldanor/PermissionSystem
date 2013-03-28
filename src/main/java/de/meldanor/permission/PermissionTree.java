@@ -18,6 +18,7 @@
 
 package de.meldanor.permission;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PermissionTree implements Comparable<PermissionTree> {
@@ -87,6 +88,27 @@ public class PermissionTree implements Comparable<PermissionTree> {
             childNode.put(suffix);
         }
 
+    }
+
+    public boolean hasPermission(String node) {
+
+        int pointIndex = node.indexOf('.');
+        if (pointIndex == -1) {
+            // Node must be a child of this subtree
+            return Collections.binarySearch(childs, new PermissionTree(node)) >= 0;
+        } else if (childs == null) {
+            return false;
+        } else {
+            // Node must be a child of a subtree of this subtree
+
+            // Split the node at the first .
+            String prefix = node.substring(0, pointIndex);
+            String suffix = node.substring(pointIndex + 1);
+
+            // Search for possible subtree with the node
+            int i = Collections.binarySearch(childs, new PermissionTree(prefix));
+            return i < 0 ? false : childs.get(i).hasPermission(suffix);
+        }
     }
 
     @Override

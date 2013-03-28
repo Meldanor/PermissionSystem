@@ -41,6 +41,9 @@ public class GeneralTest {
             }
             bReader.close();
             System.out.println(toStringTree(tree));
+            
+            System.out.println(tree.hasPermission("therock.tools.lookup"));
+            System.out.println(tree.hasPermission("therock.tools.look"));
         } catch (Exception e) {
             e.printStackTrace();
         }
