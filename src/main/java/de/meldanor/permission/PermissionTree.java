@@ -26,17 +26,17 @@ public class PermissionTree implements Comparable<PermissionTree> {
     private PermissionTree root;
     private List<PermissionTree> childs;
 
-    private String node;
+    private final String node;
 
     public PermissionTree() {
         this(null, null);
     }
 
-    public PermissionTree(String node) {
+    private PermissionTree(final String node) {
         this(null, node);
     }
 
-    public PermissionTree(PermissionTree root, String node) {
+    private PermissionTree(final PermissionTree root, final String node) {
         this.root = root;
         this.node = node;
     }
@@ -46,7 +46,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     public List<PermissionTree> getChilds() {
-        return childs;
+        return childs != null ? Collections.unmodifiableList(childs) : Collections.<PermissionTree> emptyList();
     }
 
     public String getNode() {
@@ -78,7 +78,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
         }
     }
 
-    public void put(String node) {
+    public void addNode(String node) {
         // Split at first fullstop
         int pointIndex = node.indexOf(NODE_SEPERATOR);
         // Node is a leaf - insert at this tree
@@ -101,11 +101,11 @@ public class PermissionTree implements Comparable<PermissionTree> {
                 else
                     childNode = childs.get(i);
             }
-            childNode.put(suffix);
+            childNode.addNode(suffix);
         }
     }
 
-    public boolean hasPermission(String node) {
+    public boolean hasNode(String node) {
 
         if (childs == null)
             return false;
@@ -128,7 +128,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
             // Search for possible subtree with the node
             int i = Collections.binarySearch(childs, new PermissionTree(prefix));
-            return i >= 0 ? childs.get(i).hasPermission(suffix) : false;
+            return i >= 0 ? childs.get(i).hasNode(suffix) : false;
         }
     }
 
@@ -164,5 +164,4 @@ public class PermissionTree implements Comparable<PermissionTree> {
     public int compareTo(PermissionTree other) {
         return this.node.compareTo(other.node);
     }
-
 }

@@ -39,11 +39,12 @@ public class GeneralTest {
             List<String> lines = Files.readAllLines(f.toPath(), Charset.defaultCharset());
             PermissionTree tree = new PermissionTree();
             for (String line : lines) {
-                tree.put(line);
+                tree.addNode(line);
             }
 
+            System.out.println(toStringTree(tree));
             for (String line : lines) {
-                assertTrue(tree.hasPermission(line));
+                assertTrue(tree.hasNode(line));
             }
 
         } catch (Exception e) {
@@ -55,46 +56,46 @@ public class GeneralTest {
     @Test
     public void simplePermissionTest() {
         PermissionTree tree = new PermissionTree();
-        tree.put("lol.test");
-        tree.put("lol.test2");
-        assertTrue(tree.hasPermission("lol.test"));
-        assertFalse(tree.hasPermission("lol.test3"));
+        tree.addNode("lol.test");
+        tree.addNode("lol.test2");
+        assertTrue(tree.hasNode("lol.test"));
+        assertFalse(tree.hasNode("lol.test3"));
     }
 
     @Test
     public void wildcardTest() {
         PermissionTree tree = new PermissionTree();
-        tree.put("lol.test");
-        tree.put("lol.test2");
-        tree.put("lol.*");
-        tree.put("lol.test");
+        tree.addNode("lol.test");
+        tree.addNode("lol.test2");
+        tree.addNode("lol.*");
+        tree.addNode("lol.test");
 
-        assertTrue(tree.hasPermission("lol.test.herp"));
-        assertTrue(tree.hasPermission("lol.test2"));
-        assertFalse(tree.hasPermission("*"));
+        assertTrue(tree.hasNode("lol.test.herp"));
+        assertTrue(tree.hasNode("lol.test2"));
+        assertFalse(tree.hasNode("*"));
 
-        tree.put("*");
-        assertTrue(tree.hasPermission("lol.test.herp"));
-        assertTrue(tree.hasPermission("lol.test2"));
-        assertTrue(tree.hasPermission("*"));
+        tree.addNode("*");
+        assertTrue(tree.hasNode("lol.test.herp"));
+        assertTrue(tree.hasNode("lol.test2"));
+        assertTrue(tree.hasNode("*"));
     }
 
     @Test
     public void removeTest() {
         PermissionTree tree = new PermissionTree();
-        tree.put("test.lol1");
-        tree.put("test.lol2");
-        tree.put("test.lol3");
+        tree.addNode("test.lol1");
+        tree.addNode("test.lol2");
+        tree.addNode("test.lol3");
 
-        assertTrue(tree.hasPermission("test.lol1"));
-        assertTrue(tree.hasPermission("test.lol2"));
-        assertTrue(tree.hasPermission("test.lol3"));
+        assertTrue(tree.hasNode("test.lol1"));
+        assertTrue(tree.hasNode("test.lol2"));
+        assertTrue(tree.hasNode("test.lol3"));
 
         assertTrue(tree.removeNode("test.lol1"));
-        assertFalse(tree.hasPermission("test.lol1"));
+        assertFalse(tree.hasNode("test.lol1"));
 
         assertTrue(tree.removeNode("test"));
-        assertFalse(tree.hasPermission("test"));
+        assertFalse(tree.hasNode("test"));
     }
 
     // Start of
