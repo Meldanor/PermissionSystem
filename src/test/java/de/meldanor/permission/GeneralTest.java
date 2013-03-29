@@ -18,9 +18,12 @@
 
 package de.meldanor.permission;
 
-import java.io.BufferedReader;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
-import java.io.FileReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,24 +33,51 @@ import org.junit.Test;
 public class GeneralTest {
 
     @Test
-    public void convert() {
+    public void createBigTree() {
         try {
             File f = new File("src/test/resources/permissions.txt");
-            BufferedReader bReader = new BufferedReader(new FileReader(f));
-            String line = "";
+            List<String> lines = Files.readAllLines(f.toPath(), Charset.defaultCharset());
             PermissionTree tree = new PermissionTree();
-            while ((line = bReader.readLine()) != null) {
+            for (String line : lines) {
                 tree.put(line);
             }
-            bReader.close();
             System.out.println(toStringTree(tree));
-            
-            System.out.println(tree.hasPermission("therock.tools.lookup"));
-            System.out.println(tree.hasPermission("therock.tools.look"));
+
+            for (String line : lines) {
+                assertTrue(tree.hasPermission(line));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void hasNormalPermission() {
+        PermissionTree tree = new PermissionTree();
+        tree.put("lol.test");
+        tree.put("lol.test2");
+        assertTrue(tree.hasPermission("lol.test"));
+        assertFalse(tree.hasPermission("lol.test3"));
+    }
+
+    @Test
+    public void testWildcard() {
+        PermissionTree tree = new PermissionTree();
+        tree.put("lol.test");
+        tree.put("lol.test2");
+        tree.put("lol.*");
+        tree.put("lol.test");
+
+        assertTrue(tree.hasPermission("lol.test.herp"));
+        assertTrue(tree.hasPermission("lol.test2"));
+        assertFalse(tree.hasPermission("*"));
+
+        tree.put("*");
+        assertTrue(tree.hasPermission("lol.test.herp"));
+        assertTrue(tree.hasPermission("lol.test2"));
+        assertTrue(tree.hasPermission("*"));
     }
 
     // Start of
@@ -85,6 +115,7 @@ public class GeneralTest {
         if (node.getChilds() != null) {
             Iterator<PermissionTree> it = node.getChilds().iterator();
             parentIterators.add(it);
+
             while (it.hasNext()) {
                 PermissionTree child = it.next();
                 toStringTreeHelper(child, buffer, parentIterators);

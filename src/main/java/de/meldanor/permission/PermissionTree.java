@@ -56,9 +56,19 @@ public class PermissionTree implements Comparable<PermissionTree> {
     private PermissionTree add(String node) {
         if (childs == null)
             childs = new SortedList<PermissionTree>();
+        if (node.equals("*")) {
+            childs.clear();
+        }
+        if (Collections.binarySearch(childs, new PermissionTree("*")) >= 0)
+            return this;
         PermissionTree newNode = new PermissionTree(this, node);
-        childs.add(newNode);
-        return newNode;
+
+        if (Collections.binarySearch(childs, newNode) >= 0)
+            return this;
+        else {
+            childs.add(newNode);
+            return newNode;
+        }
     }
 
     public void put(String node) {
@@ -77,16 +87,14 @@ public class PermissionTree implements Comparable<PermissionTree> {
                 childNode = add(prefix);
 
             } else {
-                for (PermissionTree child : childs) {
-                    if (child.getNode().equals(prefix))
-                        childNode = child;
-                }
-                if (childNode == null)
+                int i = Collections.binarySearch(childs, new PermissionTree(prefix));
+                if (i < 0)
                     childNode = add(prefix);
+                else
+                    childNode = childs.get(i);
             }
             childNode.put(suffix);
         }
-
     }
 
     public boolean hasPermission(String node) {
@@ -95,6 +103,9 @@ public class PermissionTree implements Comparable<PermissionTree> {
             return false;
         int pointIndex = node.indexOf('.');
         if (pointIndex == -1) {
+            if (childs.size() == 1 && childs.get(0).getNode().equals("*")) {
+                return true;
+            }
             // Node must be a child of this subtree
             return Collections.binarySearch(childs, new PermissionTree(node)) >= 0;
         } else {
@@ -103,6 +114,9 @@ public class PermissionTree implements Comparable<PermissionTree> {
             // Split the node at the first .
             String prefix = node.substring(0, pointIndex);
             String suffix = node.substring(pointIndex + 1);
+            if (childs.size() == 1 && childs.get(0).getNode().equals("*")) {
+                return true;
+            }
 
             // Search for possible subtree with the node
             int i = Collections.binarySearch(childs, new PermissionTree(prefix));
