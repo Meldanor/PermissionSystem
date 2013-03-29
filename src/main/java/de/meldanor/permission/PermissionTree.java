@@ -53,19 +53,25 @@ public class PermissionTree implements Comparable<PermissionTree> {
         return node;
     }
 
+    private final static String WILDCARD = "*";
+    private final static PermissionTree WILDCARD_NODE = new PermissionTree(WILDCARD);
+
     private PermissionTree add(String node) {
         if (childs == null)
             childs = new SortedList<PermissionTree>();
-        if (node.equals("*")) {
+        if (node.equals(WILDCARD)) {
             childs.clear();
         }
-        if (Collections.binarySearch(childs, new PermissionTree("*")) >= 0)
+        // There is already a wildcard - no need to add subnodes of a wildcard
+        if (Collections.binarySearch(childs, WILDCARD_NODE) >= 0)
             return this;
         PermissionTree newNode = new PermissionTree(this, node);
 
+        // Check if the node is already in the tree
         if (Collections.binarySearch(childs, newNode) >= 0)
             return this;
         else {
+            // create new node
             childs.add(newNode);
             return newNode;
         }
@@ -82,11 +88,12 @@ public class PermissionTree implements Comparable<PermissionTree> {
             // Prefix
             String prefix = node.substring(0, pointIndex);
             String suffix = node.substring(pointIndex + 1);
+
             PermissionTree childNode = null;
             if (childs == null) {
                 childNode = add(prefix);
-
             } else {
+                // Prevent double nodes
                 int i = Collections.binarySearch(childs, new PermissionTree(prefix));
                 if (i < 0)
                     childNode = add(prefix);
@@ -103,7 +110,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
             return false;
         int pointIndex = node.indexOf('.');
         if (pointIndex == -1) {
-            if (childs.size() == 1 && childs.get(0).getNode().equals("*")) {
+            if (childs.size() == 1 && childs.get(0).getNode().equals(WILDCARD)) {
                 return true;
             }
             // Node must be a child of this subtree
@@ -114,13 +121,13 @@ public class PermissionTree implements Comparable<PermissionTree> {
             // Split the node at the first .
             String prefix = node.substring(0, pointIndex);
             String suffix = node.substring(pointIndex + 1);
-            if (childs.size() == 1 && childs.get(0).getNode().equals("*")) {
+            if (childs.size() == 1 && childs.get(0).getNode().equals(WILDCARD)) {
                 return true;
             }
 
             // Search for possible subtree with the node
             int i = Collections.binarySearch(childs, new PermissionTree(prefix));
-            return i < 0 ? false : childs.get(i).hasPermission(suffix);
+            return i >= 0 ? childs.get(i).hasPermission(suffix) : false;
         }
     }
 
