@@ -41,7 +41,6 @@ public class GeneralTest {
             for (String line : lines) {
                 tree.put(line);
             }
-            System.out.println(toStringTree(tree));
 
             for (String line : lines) {
                 assertTrue(tree.hasPermission(line));
@@ -54,7 +53,7 @@ public class GeneralTest {
     }
 
     @Test
-    public void hasNormalPermission() {
+    public void simplePermissionTest() {
         PermissionTree tree = new PermissionTree();
         tree.put("lol.test");
         tree.put("lol.test2");
@@ -63,7 +62,7 @@ public class GeneralTest {
     }
 
     @Test
-    public void testWildcard() {
+    public void wildcardTest() {
         PermissionTree tree = new PermissionTree();
         tree.put("lol.test");
         tree.put("lol.test2");
@@ -78,6 +77,24 @@ public class GeneralTest {
         assertTrue(tree.hasPermission("lol.test.herp"));
         assertTrue(tree.hasPermission("lol.test2"));
         assertTrue(tree.hasPermission("*"));
+    }
+
+    @Test
+    public void removeTest() {
+        PermissionTree tree = new PermissionTree();
+        tree.put("test.lol1");
+        tree.put("test.lol2");
+        tree.put("test.lol3");
+
+        assertTrue(tree.hasPermission("test.lol1"));
+        assertTrue(tree.hasPermission("test.lol2"));
+        assertTrue(tree.hasPermission("test.lol3"));
+
+        assertTrue(tree.removeNode("test.lol1"));
+        assertFalse(tree.hasPermission("test.lol1"));
+
+        assertTrue(tree.removeNode("test"));
+        assertFalse(tree.hasPermission("test"));
     }
 
     // Start of

@@ -54,6 +54,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     private final static String WILDCARD = "*";
+    private static final char NODE_SEPERATOR = '.';
     private final static PermissionTree WILDCARD_NODE = new PermissionTree(WILDCARD);
 
     private PermissionTree add(String node) {
@@ -79,7 +80,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
     public void put(String node) {
         // Split at first fullstop
-        int pointIndex = node.indexOf('.');
+        int pointIndex = node.indexOf(NODE_SEPERATOR);
         // Node is a leaf - insert at this tree
         if (pointIndex == -1)
             add(node);
@@ -108,7 +109,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
         if (childs == null)
             return false;
-        int pointIndex = node.indexOf('.');
+        int pointIndex = node.indexOf(NODE_SEPERATOR);
         if (pointIndex == -1) {
             if (childs.size() == 1 && childs.get(0).getNode().equals(WILDCARD)) {
                 return true;
@@ -129,6 +130,30 @@ public class PermissionTree implements Comparable<PermissionTree> {
             int i = Collections.binarySearch(childs, new PermissionTree(prefix));
             return i >= 0 ? childs.get(i).hasPermission(suffix) : false;
         }
+    }
+
+    public boolean removeNode(String node) {
+        if (childs == null)
+            return false;
+
+        int pointIndex = node.indexOf(NODE_SEPERATOR);
+        if (pointIndex == -1) {
+            int i = Collections.binarySearch(childs, new PermissionTree(node));
+            // Not in the tree
+            if (i < 0)
+                return false;
+            else {
+                childs.remove(i);
+                return true;
+            }
+        }
+        String prefix = node.substring(0, pointIndex);
+        String suffix = node.substring(pointIndex + 1);
+        int i = Collections.binarySearch(childs, new PermissionTree(prefix));
+        if (i < 0)
+            return false;
+        else
+            return childs.get(i).removeNode(suffix);
     }
 
     @Override
