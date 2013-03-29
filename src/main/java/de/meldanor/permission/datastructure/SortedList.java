@@ -16,7 +16,7 @@
  * along with PermissionSystem.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.meldanor.permission;
+package de.meldanor.permission.datastructure;
 
 import java.util.ArrayList;
 import java.util.Collection;

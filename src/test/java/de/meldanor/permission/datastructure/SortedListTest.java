@@ -16,7 +16,7 @@
  * along with PermissionSystem.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.meldanor;
+package de.meldanor.permission.datastructure;
 
 import static org.junit.Assert.fail;
 
@@ -25,8 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-
-import de.meldanor.permission.SortedList;
 
 public class SortedListTest {
 

@@ -16,7 +16,7 @@
  * along with PermissionSystem.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package de.meldanor.permission;
+package de.meldanor.permission.datastructure;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-public class GeneralTest {
+public class PermissionTreeTest {
 
     @Test
     public void createBigTree() {
@@ -42,7 +42,6 @@ public class GeneralTest {
                 tree.addNode(line);
             }
 
-            System.out.println(toStringTree(tree));
             for (String line : lines) {
                 assertTrue(tree.hasNode(line));
             }
