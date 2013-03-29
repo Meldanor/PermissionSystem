@@ -27,8 +27,23 @@ public class Role {
     private PermissionTree permissions;
 
     public Role(String name) {
+        this(name, new PermissionTree());
+    }
+
+    public Role(String name, PermissionTree permissions) {
         this.name = name;
-        this.permissions = new PermissionTree();
+        this.permissions = permissions;
+    }
+
+    public Role(String name, Role parentRole) {
+        this(name, new PermissionTree());
+        PermissionTree parentTree = parentRole.permissions;
+        this.permissions = parentTree.copy();
+    }
+
+    public Role(String name, Role parentRole, PermissionTree additionalPermission) {
+        this(name, parentRole);
+        this.permissions = additionalPermission.copyAndAdd(permissions);
     }
 
     public String getName() {

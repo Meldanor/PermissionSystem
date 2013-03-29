@@ -53,6 +53,26 @@ public class PermissionTreeTest {
     }
 
     @Test
+    public void cloneTest() {
+        try {
+            File f = new File("src/test/resources/permissions.txt");
+            List<String> lines = Files.readAllLines(f.toPath(), Charset.defaultCharset());
+            PermissionTree tree = new PermissionTree();
+            for (String line : lines) {
+                tree.addNode(line);
+            }
+
+            System.out.println(toStringTree(tree));
+            PermissionTree copy = tree.copy();
+            System.out.println(toStringTree(copy));
+            assertTrue(toStringTree(tree).equals(toStringTree(copy)));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void simplePermissionTest() {
         PermissionTree tree = new PermissionTree();
         tree.addNode("lol.test");
