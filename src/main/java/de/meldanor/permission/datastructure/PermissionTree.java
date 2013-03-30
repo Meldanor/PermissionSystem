@@ -169,7 +169,6 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
     private void copy(final PermissionTree copy, String parentNode) {
         if (this.childs == null) {
-            System.out.println(parentNode);
             copy.addNode(parentNode + "." + this.node);
         } else {
             for (int i = 0; i < childs.size(); ++i) {

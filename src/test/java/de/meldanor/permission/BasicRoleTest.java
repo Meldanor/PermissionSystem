@@ -18,6 +18,7 @@
 
 package de.meldanor.permission;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -47,6 +48,34 @@ public class BasicRoleTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void inheritanceRole() {
+        Role userRole = new Role("user");
+        userRole.grantPermission("threads.read");
+        userRole.grantPermission("threads.answer");
+
+        assertTrue(userRole.hasPermission("threads.read"));
+        assertFalse(userRole.hasPermission("threads.open"));
+
+        Role modRole = new Role("mod", userRole);
+        modRole.grantPermission("threads.open");
+
+        assertTrue(modRole.hasPermission("threads.read"));
+        assertTrue(modRole.hasPermission("threads.open"));
+        assertFalse(userRole.hasPermission("threads.open"));
+
+        Role adminRole = new Role("admin", modRole);
+        adminRole.grantPermission("user.delete");
+
+        assertTrue(adminRole.hasPermission("threads.read"));
+        assertTrue(adminRole.hasPermission("threads.open"));
+        assertTrue(adminRole.hasPermission("user.delete"));
+
+        // Inheritated role shouldn't have the new permissions
+        assertFalse(modRole.hasPermission("user.delete"));
+        assertFalse(userRole.hasPermission("user.delete"));
     }
 
 }
