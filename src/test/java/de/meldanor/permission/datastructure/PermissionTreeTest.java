@@ -62,11 +62,8 @@ public class PermissionTreeTest {
                 tree.addNode(line);
             }
 
-            System.out.println(toStringTree(tree));
             PermissionTree copy = tree.copy();
-            System.out.println(toStringTree(copy));
             assertTrue(toStringTree(tree).equals(toStringTree(copy)));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
