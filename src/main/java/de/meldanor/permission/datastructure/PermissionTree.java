@@ -19,6 +19,7 @@
 package de.meldanor.permission.datastructure;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class PermissionTree implements Comparable<PermissionTree> {
@@ -190,6 +191,26 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
     private boolean isLeaf() {
         return this.childs == null;
+    }
+
+    public List<String> toList() {
+        if (isEmpty())
+            return Collections.<String> emptyList();
+        List<String> list = new LinkedList<String>();
+        for (PermissionTree child : childs) {
+            child.toList(list, child.getNode());
+        }
+        return list;
+    }
+
+    private void toList(final List<String> list, String parentNode) {
+        if (isLeaf()) {
+            list.add(parentNode);
+        } else {
+            for (PermissionTree child : childs) {
+                child.toList(list, parentNode + "." + child.getNode());
+            }
+        }
     }
 
     @Override

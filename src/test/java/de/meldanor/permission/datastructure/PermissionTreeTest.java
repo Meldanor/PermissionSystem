@@ -114,6 +114,25 @@ public class PermissionTreeTest {
         assertFalse(tree.hasNode("test"));
     }
 
+    @Test
+    public void toListTest() {
+        try {
+            File f = new File("src/test/resources/permissions.txt");
+            List<String> lines = Files.readAllLines(f.toPath(), Charset.defaultCharset());
+            PermissionTree tree = new PermissionTree();
+            for (String line : lines) {
+                tree.addNode(line);
+            }
+
+            List<String> nodes = tree.toList();
+            for (String node : nodes)
+                assertTrue(tree.hasNode(node));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Start of
     // © Connor Garvey at January 30th, 2009.
     public static String toStringTree(PermissionTree node) {
