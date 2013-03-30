@@ -58,11 +58,13 @@ public class PermissionTree implements Comparable<PermissionTree> {
     private final static PermissionTree WILDCARD_NODE = new PermissionTree(WILDCARD);
 
     private PermissionTree add(String node) {
-        if (childs == null)
+        if (isLeaf())
             childs = new SortedList<PermissionTree>();
+
         if (node.equals(WILDCARD)) {
             childs.clear();
         }
+
         // There is already a wildcard - no need to add subnodes of a wildcard
         if (Collections.binarySearch(childs, WILDCARD_NODE) >= 0)
             return this;
@@ -91,7 +93,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
             String suffix = node.substring(pointIndex + 1);
 
             PermissionTree childNode = null;
-            if (childs == null) {
+            if (isLeaf()) {
                 childNode = add(prefix);
             } else {
                 // Prevent double nodes
@@ -107,8 +109,9 @@ public class PermissionTree implements Comparable<PermissionTree> {
 
     public boolean hasNode(String node) {
 
-        if (childs == null)
+        if (isEmpty())
             return false;
+
         int pointIndex = node.indexOf(NODE_SEPERATOR);
         if (pointIndex == -1) {
             if (childs.size() == 1 && childs.get(0).getNode().equals(WILDCARD)) {
@@ -133,7 +136,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     public boolean removeNode(String node) {
-        if (childs == null)
+        if (isEmpty())
             return false;
 
         int pointIndex = node.indexOf(NODE_SEPERATOR);
@@ -144,6 +147,8 @@ public class PermissionTree implements Comparable<PermissionTree> {
                 return false;
             else {
                 childs.remove(i);
+                if (childs.isEmpty())
+                    childs = null;
                 return true;
             }
         }
@@ -161,7 +166,7 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     public PermissionTree copyAndAdd(final PermissionTree copy) {
-        if (childs == null)
+        if (isEmpty())
             return copy;
         for (PermissionTree child : childs) {
             child.copy(copy, child.getNode());
@@ -170,13 +175,21 @@ public class PermissionTree implements Comparable<PermissionTree> {
     }
 
     private void copy(final PermissionTree copy, String parentNode) {
-        if (this.childs == null) {
+        if (isLeaf()) {
             copy.addNode(parentNode);
         } else {
             for (PermissionTree child : childs) {
                 child.copy(copy, parentNode + "." + child.getNode());
             }
         }
+    }
+
+    public boolean isEmpty() {
+        return this.node == null && this.childs == null;
+    }
+
+    private boolean isLeaf() {
+        return this.childs == null;
     }
 
     @Override
