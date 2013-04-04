@@ -37,8 +37,7 @@ public class Role {
 
     public Role(String name, Role parentRole) {
         this(name, new PermissionTree());
-        PermissionTree parentTree = parentRole.permissions;
-        this.permissions = parentTree.copy();
+        this.permissions = parentRole.permissions.copy();
     }
 
     public Role(String name, Role parentRole, PermissionTree additionalPermission) {
